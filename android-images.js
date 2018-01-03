@@ -42,17 +42,24 @@ AndroidImages.prototype.loadResources = function(srcPath) {
         this.loadDrawables(path.join(srcPath, dir));
 }
 
-AndroidImages.prototype.loadFromPath = function(srcPath) {
+AndroidImages.prototype.getResPath = function(srcPath) {
     var basePath = path.basename(srcPath);
     if (basePath == 'Resources')
-        this.loadResources(srcPath);
+        return srcPath;
     else {
         var resPath = path.join(srcPath, 'Resources');
         if (fs.existsSync(resPath))
-            this.loadResources(resPath);
-        else
-            this.loadDrawables(srcPath);
+            return resPath;
     }
+    return null;
+}
+
+AndroidImages.prototype.loadFromPath = function(srcPath) {
+    var resPath = this.getResPath(srcPath);
+    if (resPath)
+        this.loadResources(resPath);
+    else
+        this.loadDrawables(srcPath);
 }
 
 module.exports = AndroidImages;
