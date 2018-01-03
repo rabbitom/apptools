@@ -3,6 +3,8 @@ const path = require('path');
 
 function iOSImages() {
     this.images = {};
+    this.fileCount = 0; //文件数量
+    this.imageCount = 0; //图片数量（多个分辨率的算一张图片）
 }
 
 iOSImages.prototype.loadFromPath = function(srcPath) {
@@ -14,6 +16,7 @@ iOSImages.prototype.loadFromPath = function(srcPath) {
         var parts = fileName.match(iOSImageResPattern);
         if (parts == null)
             continue;
+        this.fileCount++;
         var imageName = parts[1];
         var res = parts[2];
         var image = this.images[imageName];
@@ -23,6 +26,7 @@ iOSImages.prototype.loadFromPath = function(srcPath) {
             image = {};
             image[res] = filePath;
             this.images[imageName] = image;
+            this.imageCount++;
         }
     }
 }

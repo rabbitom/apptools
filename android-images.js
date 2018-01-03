@@ -4,6 +4,8 @@ const path = require('path');
 function AndroidImages() {
     this.images = {};
     this.ignore = ['.DS_Store'];
+    this.fileCount = 0; //文件数量
+    this.imageCount = 0; //图片数量（多个分辨率的算一张图片）
 }
 
 AndroidImages.prototype.loadDrawables = function(srcPath) {
@@ -19,6 +21,7 @@ AndroidImages.prototype.loadDrawables = function(srcPath) {
     for (var filename of files) {
         if (this.ignore.indexOf(filename) >= 0)
             continue;
+        this.fileCount++;
         var filepath = path.join(srcPath, filename);
         var basename = path.basename(filename, '.png');
         var image = this.images[basename];
@@ -28,6 +31,7 @@ AndroidImages.prototype.loadDrawables = function(srcPath) {
             image = {};
             image[res] = filepath;
             this.images[basename] = image;
+            this.imageCount++;
         }
     }
 }
