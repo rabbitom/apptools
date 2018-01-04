@@ -1,6 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
+const android_folder_res = {
+    'drawable-xhdpi': '2x',
+    'drawable-xxhdpi': '3x'
+}
+
+function reverseObject(src) {
+    var dest = {};
+    for (var key in src) {
+        var value = src[key];
+        dest[value] = key;
+    }
+    return dest;
+}
+
+const android_res_folder = reverseObject(android_folder_res);
+
 function AndroidImages() {
     this.images = {};
     this.ignore = ['.DS_Store'];
@@ -9,12 +25,8 @@ function AndroidImages() {
 }
 
 AndroidImages.prototype.loadDrawables = function(srcPath) {
-    const android_res = {
-        'drawable-xhdpi': '2x',
-        'drawable-xxhdpi': '3x'
-    }
     var basePath = path.basename(srcPath);
-    var res = android_res[basePath];
+    var res = android_folder_res[basePath];
     if (res == null)
         return;
     var files = fs.readdirSync(srcPath);
@@ -60,6 +72,27 @@ AndroidImages.prototype.loadFromPath = function(srcPath) {
         this.loadResources(resPath);
     else
         this.loadDrawables(srcPath);
+}
+
+
+AndroidImages.prototype.saveToProject = function(destPath) {
+    var resPath = this.getResPath(destPath);
+    if (resPath == null)
+        return;
+    for (var imageName in this.images) {
+        var image = this.images[imageName];
+        this.imageCount++;
+        for (var res in image) {
+            var folder = android_res_folder[res];
+            if (folder == null)
+                continue;
+            var fileName = imageName + '.png';
+            var srcFilePath = image[res];
+            var destFilePath = path.join(resPath, folder, fileName);
+            fs.copyFileSync(srcFilePath, destFilePath);
+            this.fileCount++;
+        }
+    }
 }
 
 module.exports = AndroidImages;
