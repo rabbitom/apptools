@@ -1,0 +1,15 @@
+#!/bin/sh
+if [ $# -lt 1 ]
+	then
+		echo "Convert logo image to different sizes for iOS/Andorid app.\nUsage: resize-app-logo <filename> [ios]"
+		exit 1
+fi
+if [ "$2" == "ios" ]; then
+    SIZES=(180 120 87 80 58)
+else
+    SIZES=(192 144 96 72 48 36)
+fi
+for i in "${SIZES[@]}"; do
+	convert -resize $ix$i $1 logo-$i.png
+    echo "created logo-$i.png"
+done
