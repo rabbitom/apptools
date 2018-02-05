@@ -17,3 +17,11 @@ console.log(JSON.stringify(src.images));
 var dest = new iOSImages();
 dest.images = src.images;
 dest.saveToProject(destPath);
+
+var ProjectItems = require('./lib/xamarin-project-items.js');
+var project = new ProjectItems('/Users/Tom/Desktop/Projects/EarPhone/EarPhone/iOS');
+for (var folder of dest.newFolders)
+    project.addFileItem(folder, 'Folder');
+for (var file of dest.newFiles)
+    project.addFileItem(file, 'ImageAsset');
+project.saveToProject();
